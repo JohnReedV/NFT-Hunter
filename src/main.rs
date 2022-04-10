@@ -16,26 +16,14 @@ async fn main() -> web3::Result<()> {
     let blocknumber = BlockNumber::Number(number);
     let block = BlockId::Number(blocknumber);
 
-    let blockdata = web3.eth().block(block).await?;
+    let blockdata = web3.eth().block(block).await?.unwrap();
+    let transactions = blockdata.transactions;
 
-    match blockdata {
-        Some(block) => {
-            let transactions = block.transactions;
-
-            for i in transactions{
-                let receipt = web3.eth().transaction_receipt(i).await?;
-
-                match receipt {
-                    Some(data) => {
-                        if data.contract_address != None {
-                            println!("{:?}", data.contract_address);
-                        }
-                    }
-                    None => {}
-                }
-            }
-        },
-        None => {}
+    for i in transactions {
+        let receipt = web3.eth().transaction_receipt(i).await?.unwrap();
+        if receipt.contract_address != None {
+            println!("{:?}", receipt.contract_address.unwrap());
+        }
     }
     number = number + 1;
 }
