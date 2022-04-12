@@ -1,6 +1,9 @@
 mod contract_address_finder;
 use contract_address_finder::get_contract_address;
 
+mod contract;
+use contract::get_contract;
+
 use web3::types::{U64, H160};
 
 
@@ -23,6 +26,8 @@ async fn main() -> web3::Result<()> {
     
     let contract_address = data.0;
     println!("{:?}", contract_address);
+
+    let contract = get_contract(contract_address).await;
 
     number = number + U64([1]);
     }
