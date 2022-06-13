@@ -22,12 +22,13 @@ async fn main() -> web3::Result<()> {
     
     if data.0 == H160([0, 1, 2, 3, 4, 5, 6 ,7 ,8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) {
         number = number + U64([1]);
-        continue; }
+        continue;
+     }
     
     let contract_address = data.0;
     println!("{:?}", contract_address);
 
-    let contract = get_contract(contract_address).await;
+    let contract = get_contract(&web3, contract_address).await;
 
     number = number + U64([1]);
     }
