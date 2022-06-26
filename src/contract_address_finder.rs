@@ -5,8 +5,7 @@ use web3::{api::Web3, transports::http::Http, types::BlockId, types::BlockNumber
 pub async fn get_contract_address(web3: &Web3<Http>, number: U64) -> web3::Result<(web3::types::H160, Error)> {
     //let contract = web3::contract::Contract::new();
 
-    let mut result: H160 = H160([0, 1, 2, 3, 4, 5, 6 ,7 ,8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
-
+    let mut result: H160 = H160::default();
 
         let blocknumber = BlockNumber::Number(number);
         let block = BlockId::Number(blocknumber);

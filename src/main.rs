@@ -13,14 +13,14 @@ async fn main() -> web3::Result<()> {
     let web3 = web3::Web3::new(transport);
 
     let current: U64 = web3.eth().block_number().await?;
-    let mut number: U64 = U64([190220]);
+    let mut number: U64 = U64([252617]);
 
     while current > number {
     println!("{}", number);
 
     let data = get_contract_address(&web3, number).await?;
     
-    if data.0 == H160([0, 1, 2, 3, 4, 5, 6 ,7 ,8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) {
+    if data.0 == H160::default() {
         number = number + U64([1]);
         continue;
      }
