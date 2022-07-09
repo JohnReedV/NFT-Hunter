@@ -3,7 +3,7 @@ use web3::{api::Web3, contract::{Contract, Options}, transports::http::Http, typ
 use hex_literal::hex;
 use std::fs::File;
 
-pub async fn check_contract(web3: &Web3<Http>, contract_address: H160) {
+pub async fn check_contract(web3: &Web3<Http>, contract_address: H160) -> Option<web3::contract::Contract<Http>> {
     let mut is721: bool = false;
     let mut is1155: bool = false;
 
@@ -19,9 +19,24 @@ pub async fn check_contract(web3: &Web3<Http>, contract_address: H160) {
         None => {}
     }
 
-    if is721 == true { println!("Contract Type: 721")}
-    else if is1155 == true { println!("Contract Type: 1155") }
-    else { println!("Not NFT")}
+    if is721 == true {
+
+        println!("Contract Type: 721");
+        let file = File::open("./ABIs/721ABI.json").unwrap();
+        let abi = web3::ethabi::Contract::load(file).unwrap();
+        return Some(Contract::new(web3.eth(), contract_address, abi));
+
+    }  else if is1155 == true { 
+
+        println!("Contract Type: 1155");
+        let file = File::open("./ABIs/1155ABI.json").unwrap();
+        let abi = web3::ethabi::Contract::load(file).unwrap();
+        return Some(Contract::new(web3.eth(), contract_address, abi));
+
+     } else { 
+        println!("Not NFT");
+        return None;
+    }
 }
 
 pub async fn check721(web3: &Web3<Http>, contract_address: H160) -> web3::contract::Result<bool> {
