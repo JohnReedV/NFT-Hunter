@@ -18,6 +18,10 @@ pub async fn check_contract(web3: &Web3<Http>, contract_address: H160) {
         Some(result) => { if result == true {is1155 = true} }
         None => {}
     }
+
+    if is721 == true { println!("Contract Type: 721")}
+    else if is1155 == true { println!("Contract Type: 1155") }
+    else { println!("Not NFT")}
 }
 
 pub async fn check721(web3: &Web3<Http>, contract_address: H160) -> web3::contract::Result<bool> {
