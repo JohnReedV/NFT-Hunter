@@ -30,7 +30,7 @@ async fn main() -> web3::Result<()> {
         let data: Option<Contract<Http>> = check_contract(&web3, contract_address).await;
         match data {
             Some(contract) => {
-                get_nfts(contract).await;
+                get_nfts(&web3, contract, block_number).await;
             } None => {}
         }
 
