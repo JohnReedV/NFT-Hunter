@@ -45,7 +45,7 @@ pub async fn get_nfts(
                                                 Ok(tokenuri) => { 
                                                     token_uri = tokenuri;
 
-                                                 } Err(d) => {
+                                                 } Err(err) => {
                                                     let result = contract.query("uri", token_id, None, Options::default(), None);
                                                     token_uri = result.await?;
                                                  }
