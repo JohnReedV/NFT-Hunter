@@ -5,38 +5,36 @@ mod check_contract;
 use check_contract::check_contract;
 mod get_nfts;
 use get_nfts::get_nfts;
-use web3::{contract::Contract, transports::Http, types::{H160, U64}};
+use web3::{contract::Contract, transports::Http, types::{H160, U64, BlockNumber, BlockId}};
 
 #[tokio::main]
 async fn main() -> web3::Result<()> {
     let transport = web3::transports::http::Http::new("https://rpc.api.moonbeam.network")?;
     let web3 = web3::Web3::new(transport);
 
-    let mut current_block: U64 = web3.eth().block_number().await?;
     let mut block_number: U64 = U64([209449]);
 
-    loop {
-        println!("{}", block_number);
+    let mut contracts: Vec<web3::contract::Contract<Http>> = Vec::new();
 
-        let data = get_contract_address(&web3, block_number).await?;
-        if data.0 == H160::default() {
-            block_number = block_number + U64([1]);
-            continue;
-        }
+    loop {
+        block_number = block_number + U64([1]);
+        
+        println!("{}", block_number);
+        let blocknumber = BlockNumber::Number(block_number);
+        let block = BlockId::Number(blocknumber);
+        let blockdata = web3.eth().block(block).await?;
+
+        let data = get_contract_address(&web3, &blockdata).await?;
 
         let contract_address = data.0;
-        println!("{:?}", contract_address);
-
-        let data: Option<Contract<Http>> = check_contract(&web3, contract_address).await;
-        match data {
+        let info: Option<Contract<Http>> = check_contract(&web3, contract_address).await;
+        match info {
             Some(contract) => {
-                get_nfts(&web3, contract, block_number).await;
+                if data.0 != H160::default() {
+                    contracts.push(contract);
+                }
             } None => {}
         }
-
-        block_number = block_number + U64([1]);
-        current_block = web3.eth().block_number().await?;
+        let nfts = get_nfts(&web3, &contracts, &blockdata).await;
     }
-
-    Ok(())
 }

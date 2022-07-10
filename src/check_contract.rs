@@ -21,20 +21,19 @@ pub async fn check_contract(web3: &Web3<Http>, contract_address: H160) -> Option
 
     if is721 == true {
 
-        println!("Contract Type: 721");
+        println!("Contract Type: 721, Address: {:?}", contract_address);
         let file = File::open("./ABIs/721ABI.json").unwrap();
         let abi = web3::ethabi::Contract::load(file).unwrap();
         return Some(Contract::new(web3.eth(), contract_address, abi));
 
     }  else if is1155 == true { 
 
-        println!("Contract Type: 1155");
+        println!("Contract Type: 1155, Address: {:?}", contract_address);
         let file = File::open("./ABIs/1155ABI.json").unwrap();
         let abi = web3::ethabi::Contract::load(file).unwrap();
         return Some(Contract::new(web3.eth(), contract_address, abi));
 
      } else { 
-        println!("Not NFT");
         return None;
     }
 }
