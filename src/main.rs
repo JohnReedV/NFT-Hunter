@@ -4,7 +4,7 @@ use contract_address_finder::get_contract_address;
 mod check_contract;
 use check_contract::check_contract;
 mod get_nfts;
-use get_nfts::get_nfts;
+use get_nfts::{get_nfts, Nft};
 use web3::{contract::Contract, transports::Http, types::{H160, U64, BlockNumber, BlockId}};
 
 #[tokio::main]
@@ -15,6 +15,7 @@ async fn main() -> web3::Result<()> {
     let mut block_number: U64 = U64([209449]);
 
     let mut contracts: Vec<web3::contract::Contract<Http>> = Vec::new();
+    let mut nft_list: Vec<Nft> = Vec::new();
 
     loop {
         block_number = block_number + U64([1]);
@@ -36,5 +37,15 @@ async fn main() -> web3::Result<()> {
             } None => {}
         }
         let nfts = get_nfts(&web3, &contracts, &blockdata).await;
+
+        match nfts {
+            Ok(result) => {
+                let nft_vec = result.0;
+                for nft in nft_vec {
+                    nft_list.push(nft);
+                }
+
+             } Err(err) => {}
+        }
     }
 }
