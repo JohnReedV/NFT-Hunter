@@ -8,10 +8,10 @@ use web3::{
 };
 
 pub struct Nft {
-    world: H160,
-    owner: H160,
-    tokenid: u64,
-    tokenuri: String
+    pub world: H160,
+    pub owner: H160,
+    pub tokenid: u64,
+    pub tokenuri: String
 }
 
 pub async fn get_nfts(

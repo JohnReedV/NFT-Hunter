@@ -42,7 +42,20 @@ async fn main() -> web3::Result<()> {
             Ok(result) => {
                 let nft_vec = result.0;
                 for nft in nft_vec {
-                    nft_list.push(nft);
+                    let mut updated = false;
+                    let mut i = 0;
+                    let length = nft_list.len();
+                    loop {
+                        if !i<length {
+                            if nft_list[i].world == nft.world && nft_list[i].tokenid == nft.tokenid {
+                                nft_list[i].owner = nft.owner;
+                                updated = true;
+                                break;
+                            }
+                            i = i + 1;
+                        } else {break};
+                    }
+                    if !updated {nft_list.push(nft)}
                 }
 
              } Err(err) => {}
