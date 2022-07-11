@@ -4,7 +4,7 @@
 
 ## **Result**
 
-NFT-Hunter will start at the given start block and on the given chain.
+NFT-Hunter will start at the given block and on the given chain.
 
 From this point it will search every block for contracts.
 
