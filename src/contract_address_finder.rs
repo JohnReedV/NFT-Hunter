@@ -1,4 +1,3 @@
-use std::fmt::Error;
 
 use web3::{
     api::Web3,
