@@ -5,6 +5,7 @@ mod check_contract;
 use check_contract::check_contract;
 mod get_nfts;
 use get_nfts::{get_nfts, Nft};
+use std::collections::HashSet;
 use web3::{
     contract::Contract,
     transports::Http,
@@ -21,6 +22,8 @@ async fn main() -> web3::Result<()> {
     let mut contracts: Vec<web3::contract::Contract<Http>> = Vec::new();
     let mut nft_list: Vec<Nft> = Vec::new();
 
+    let mut processed_contracts: HashSet<H160> = HashSet::new();
+
     loop {
         block_number = block_number + U64([1]);
 
@@ -31,17 +34,25 @@ async fn main() -> web3::Result<()> {
 
         let data = get_contract_address(&web3, &blockdata).await?;
 
-        let contract_address = data.0;
-        let info: Option<Contract<Http>> = check_contract(&web3, contract_address).await;
-        match info {
-            Some(contract) => {
-                if data.0 != H160::default() {
-                    contracts.push(contract);
+        match data {
+            Some(contract_address) => {
+                if !processed_contracts.contains(&contract_address) {
+                    let info: Option<Contract<Http>> =
+                        check_contract(&web3, contract_address).await;
+                    match info {
+                        Some(contract) => {
+                            contracts.push(contract);
+                            processed_contracts.insert(contract_address);
+                        }
+                        None => {}
+                    }
                 }
             }
             None => {}
         }
-        let nfts = get_nfts(&web3, &contracts, &blockdata).await;
+
+        let nfts: Result<(Vec<Nft>, std::fmt::Error), web3::contract::Error> =
+            get_nfts(&web3, &contracts, &blockdata).await;
 
         match nfts {
             Ok(result) => {

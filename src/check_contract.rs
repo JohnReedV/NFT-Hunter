@@ -12,35 +12,12 @@ pub async fn check_contract(
     web3: &Web3<Http>,
     contract_address: H160,
 ) -> Option<web3::contract::Contract<Http>> {
-    let mut is721: bool = false;
-    let mut is1155: bool = false;
-
-    let data721: Option<bool> = check721(web3, contract_address).await.ok();
-    match data721 {
-        Some(result) => {
-            if result == true {
-                is721 = true
-            }
-        }
-        None => {}
-    }
-
-    let data1155: Option<bool> = check1155(web3, contract_address).await.ok();
-    match data1155 {
-        Some(result) => {
-            if result == true {
-                is1155 = true
-            }
-        }
-        None => {}
-    }
-
-    if is721 == true {
+    if check721(web3, contract_address).await.is_ok() {
         println!("Contract Type: 721, Address: {:?}", contract_address);
         let file = File::open("./ABIs/721ABI.json").unwrap();
         let abi = web3::ethabi::Contract::load(file).unwrap();
         return Some(Contract::new(web3.eth(), contract_address, abi));
-    } else if is1155 == true {
+    } else if check1155(web3, contract_address).await.is_ok() {
         println!("Contract Type: 1155, Address: {:?}", contract_address);
         let file = File::open("./ABIs/1155ABI.json").unwrap();
         let abi = web3::ethabi::Contract::load(file).unwrap();
