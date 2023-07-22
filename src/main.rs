@@ -5,7 +5,11 @@ mod check_contract;
 use check_contract::check_contract;
 mod get_nfts;
 use get_nfts::{get_nfts, Nft};
-use web3::{contract::Contract, transports::Http, types::{H160, U64, BlockNumber, BlockId}};
+use web3::{
+    contract::Contract,
+    transports::Http,
+    types::{BlockId, BlockNumber, H160, U64},
+};
 
 #[tokio::main]
 async fn main() -> web3::Result<()> {
@@ -19,7 +23,7 @@ async fn main() -> web3::Result<()> {
 
     loop {
         block_number = block_number + U64([1]);
-        
+
         println!("{}", block_number);
         let blocknumber = BlockNumber::Number(block_number);
         let block = BlockId::Number(blocknumber);
@@ -34,7 +38,8 @@ async fn main() -> web3::Result<()> {
                 if data.0 != H160::default() {
                     contracts.push(contract);
                 }
-            } None => {}
+            }
+            None => {}
         }
         let nfts = get_nfts(&web3, &contracts, &blockdata).await;
 
@@ -46,19 +51,24 @@ async fn main() -> web3::Result<()> {
                     let mut i = 0;
                     let length = nft_list.len();
                     loop {
-                        if !i<length {
-                            if nft_list[i].world == nft.world && nft_list[i].tokenid == nft.tokenid {
+                        if !i < length {
+                            if nft_list[i].world == nft.world && nft_list[i].tokenid == nft.tokenid
+                            {
                                 nft_list[i].owner = nft.owner;
                                 updated = true;
                                 break;
                             }
                             i = i + 1;
-                        } else {break};
+                        } else {
+                            break;
+                        };
                     }
-                    if !updated {nft_list.push(nft)}
+                    if !updated {
+                        nft_list.push(nft)
+                    }
                 }
-
-             } Err(err) => {}
+            }
+            Err(err) => {}
         }
     }
 }

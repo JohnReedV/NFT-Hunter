@@ -1,9 +1,9 @@
 [package]
-name = "rust-web3"
+name = "nft-hunter"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-web3 = '0.18.0'
-hex-literal = "0.3"
+web3 = '0.19.0'
+hex-literal = "0.4.1"
 tokio = {version = "1.17.0", features = ["full"] }
